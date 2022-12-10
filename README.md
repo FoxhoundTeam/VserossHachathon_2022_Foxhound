@@ -1,6 +1,9 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub contributors](https://img.shields.io/github/contributors/Ornstein89/VserossHachathon_2022_Foxhound)
+
 # FoxInt
 
-Решение команды Foxhound на Всероссийском хакатоне (https://hackathon-rf.ru/), 9-12 декабря 2022 г. Кейс 1, задача "Определение местоположения БВС в условиях отсутствия GPS\ГЛОНАСС сигнала" (https://drive.google.com/file/d/1hKSvoX6HPj983NkXkuqmTxuvnFJjkpKd/view)
+Решение команды Foxhound на Всероссийском хакатоне (https://hackathon-rf.ru/), 9-12 декабря 2022 г. Кейс 1, задача "Определение местоположения БВС в условиях отсутствия GPS\ГЛОНАСС сигнала" (https://drive.google.com/file/d/1hKSvoX6HPj983NkXkuqmTxuvnFJjkpKd/view). Демоверсия развёрнута на https://foxhound-team.pro и доступна до 19 декабря 2022 г.
 
 # Структура репозитория
 
