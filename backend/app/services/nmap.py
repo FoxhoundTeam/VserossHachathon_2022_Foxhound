@@ -45,6 +45,8 @@ class NmapService:
             parsed_output = nmap3.Nmap().get_xml_et(xml_output.read())
             scan_result = parser.filter_top_ports(parsed_output)
             for entry in scan_result.values():
+                if not isinstance(entry, dict):
+                    continue
                 for port_info in entry.get("ports", []):
                     service_name = None
                     service_product = None
