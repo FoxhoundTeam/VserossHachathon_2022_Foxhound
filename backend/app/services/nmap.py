@@ -80,7 +80,7 @@ class NmapService:
                 "-Pn",
                 "--stats-every",
                 "10s",
-                "-oA",
+                "-oX",
                 self.filename,
                 str(self.ip),
             ],
