@@ -65,7 +65,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item @click="$router.replace({ name: 'Сase1View2' })">
+        <v-list-item @click="$router.replace({ name: 'StartScan' })">
           <!-- v-if="this.$store.state.current_user && this.$store.state.current_user.groups[0]>=4" -->
           <v-list-item-icon>
             <v-icon>mdi-sunglasses</v-icon>

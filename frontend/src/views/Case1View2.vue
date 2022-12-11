@@ -2,23 +2,10 @@
   <v-row style="height: 100%" no-gutters fill-height>
     <!-- настройки -->
     <v-col cols="12" md="4" no-gutters class="pa-1">
-      <!-- TODO фильтры ввода -->
-      <v-text-field
-        v-model="ip"
-        label="Введите IP-адрес для сканирования"
-        outlined
-        clearable
-      ></v-text-field>
-      <v-btn color="primary" @click="startScan" :loading="loading">
-        <v-icon v-if="!loading">mdi-magnify-expand</v-icon>
-        Сканировать
-      </v-btn>
-      <v-progress-linear
-        v-if="progress"
-        v-model="progress"
-        height="25"
-        class="mt-5"
-      >
+      <p>
+        {{ loading ? "Сканируем:" : "Результаты сканирования:" }} {{ scan.ip }}
+      </p>
+      <v-progress-linear v-model="progress" height="25" class="mt-5">
         <template v-slot:default="{ value }">
           <strong>{{ Math.ceil(value) }}%</strong>
         </template>
@@ -74,7 +61,6 @@ export default {
         { text: "Версия", value: "version" },
         { text: "Доп. информация", value: "meta" },
       ],
-      ip: "",
       longPoolingInterval: null,
       services: null,
       scan: {
@@ -104,6 +90,25 @@ export default {
     },
   },
 
+  async beforeMount() {
+    this.scan = (
+      await http.getItem("Scan", {
+        id: this.$route.params.id,
+        showSnackbar: true,
+      })
+    ).data;
+    if (this.loading && this.longPoolingInterval == null)
+      this.longPoolingInterval = setInterval(this.checkStatus, 2000);
+    else if (!this.loading) {
+      this.services = (
+        await http.getItem(`/api/scans/${this.scan.id}/services/`, {
+          showSnackbar: true,
+        })
+      ).data;
+      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
+    }
+  },
+
   methods: {
     async checkStatus() {
       this.scan = (
@@ -119,18 +124,7 @@ export default {
           showSnackbar: true,
         })
       ).data;
-    },
-
-    // начать сканирование по адресу
-    async startScan() {
-      const response = await http.createItem("Scan", {
-        showSnackbar: true,
-        data: { ip: this.ip },
-      });
-      if (response.status != 200) return;
-      this.scan = response.data;
-      if (this.longPoolingInterval == null)
-        this.longPoolingInterval = setInterval(this.checkStatus, 2000);
+      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
     },
   },
 };

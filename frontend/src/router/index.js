@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Case1View1 from "../views/Case1View1.vue";
 import Case1View2 from "../views/Case1View2.vue";
 import Case2View from "../views/Case2View.vue";
+import StartScan from "../views/StartScan.vue";
 import LoginView from "../views/LoginView.vue";
 
 Vue.use(VueRouter);
@@ -25,7 +26,15 @@ const routes = [
     },
   },
   {
-    path: "/scan",
+    path: "/start_scan",
+    name: "StartScan",
+    component: StartScan,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/scan/:id",
     name: "Сase1View2",
     component: Case1View2,
     meta: {
