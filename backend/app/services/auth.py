@@ -101,7 +101,7 @@ class AuthService(BaseDBService):
 
         user: Optional[database.User] = self.session.query(database.User).filter(database.User.email == email).first()
 
-        if not user or not user.is_active:
+        if not user:
             raise exception
 
         if not self.verify_password(password, user.password_hash):
