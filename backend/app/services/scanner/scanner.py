@@ -1,14 +1,22 @@
 from dataclasses import dataclass
 from functools import cached_property
+from typing import Type
 
 from sqlalchemy.orm import Session
 
 from app import schemes
 from app.database import Scan, Service
 from app.enum import ScanStatus
-from app.services.brute_psql import BrutePSQL
-from app.services.masscan import MasscanService
-from app.services.nmap import NmapService
+from app.services.scanner.base_stage import BaseStage
+from app.services.scanner.brute_psql import BrutePSQLService
+from app.services.scanner.masscan import MasscanService
+from app.services.scanner.nmap import NmapService
+
+PIPELINE: list[Type[BaseStage]] = [
+    MasscanService,
+    NmapService,
+    BrutePSQLService,
+]
 
 
 @dataclass
@@ -31,8 +39,9 @@ class Scanner:
         initial_progress = self.scan.progress
 
         def _handle_progress_logs(logs: str, progress: float):
-            self.scan.progress = initial_progress + progress / 2
-            self.scan.log += logs + "\n"
+            self.scan.progress = initial_progress + progress / len(PIPELINE)
+            if logs:
+                self.scan.log += logs + "\n"
             self.session.add(self.scan)
             self.session.commit()
 
@@ -40,12 +49,13 @@ class Scanner:
 
     def start(self):
         try:
-            masscan_result = MasscanService(self.scan.ip, self._get_progress_logs_handler()).start_scan()
-            nmap_result = NmapService(
-                self.scan.ip, ",".join([str(service.port) for service in masscan_result])
-            ).start_scan()
-            filled_services = BrutePSQL(self.scan.ip, nmap_result).brute()
-            self._save_services(filled_services)
+            services = None
+            for stage in PIPELINE:
+                if services is None:
+                    services = stage(self.scan.ip, self._get_progress_logs_handler()).start()
+                else:
+                    services = stage(self.scan.ip, services, self._get_progress_logs_handler()).start()
+            self._save_services(services)
         except Exception as e:
             self.scan.log += f"{e}\n"
             self.scan.status = ScanStatus.error

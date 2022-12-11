@@ -34,7 +34,7 @@ class MasscanService:
             services = [make_service(line) for line in result_file if not skip_line(line)]
         return services
 
-    def start_scan(self) -> list[Service]:
+    def start(self) -> list[Service]:
         pid = subprocess.Popen(
             [
                 "masscan",

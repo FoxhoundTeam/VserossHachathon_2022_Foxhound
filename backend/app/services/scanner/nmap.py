@@ -29,7 +29,7 @@ def get_status(status: str) -> PortStatus:
 @dataclass
 class NmapService:
     ip: str
-    ports: str
+    services: list[Service]
     handle_progress_logs: Callable[[str, float], None] = None
 
     @cached_property
@@ -68,13 +68,13 @@ class NmapService:
                     )
         return services
 
-    def start_scan(self) -> list[Service]:
+    def start(self) -> list[Service]:
         pid = subprocess.Popen(
             [
                 "nmap",
                 "-v2",
                 "-p",
-                self.ports,
+                ",".join([str(service.port) for service in self.services]),
                 "-sT",
                 "-T4",
                 "-sV",
