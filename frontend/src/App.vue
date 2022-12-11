@@ -174,7 +174,15 @@ export default {
 };
 </script>
 
+<style>
+.leaflet-attribution-flag {
+	display: none;
+  visibility: hidden;
+}
+</style>
+
 <style lang="scss">
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
