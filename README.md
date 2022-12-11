@@ -3,7 +3,13 @@
 
 # FoxInt
 
-Решение команды Foxhound на Всероссийском хакатоне (https://hackathon-rf.ru/), 9-12 декабря 2022 г. Кейс 1, задача "Определение местоположения БВС в условиях отсутствия GPS\ГЛОНАСС сигнала" (https://drive.google.com/file/d/1hKSvoX6HPj983NkXkuqmTxuvnFJjkpKd/view). Демоверсия развёрнута на https://foxhound-team.pro и доступна до 19 декабря 2022 г.
+Решение команды Foxhound на Всероссийском хакатоне (https://hackathon-rf.ru/), 9-12 декабря 2022 г. 
+
+Кейс 1, задача "Определение местоположения БВС в условиях отсутствия GPS\ГЛОНАСС сигнала" (https://drive.google.com/file/d/1hKSvoX6HPj983NkXkuqmTxuvnFJjkpKd/view). 
+
+Демоверсия развёрнута на https://foxhound-team.pro и доступна до 19 декабря 2022 г.
+
+Документация к API доступна на https://foxhound-team.pro/docs
 
 # Структура репозитория
 

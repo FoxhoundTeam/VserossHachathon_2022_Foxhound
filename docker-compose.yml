@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      dockerfile: ./compose/backend/Dockerfile
+      context: .
+    command: bash -c "alembic upgrade head && uvicorn --port 8000 --host 0.0.0.0 app.main:app"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - ./mounts/media:/app/media
+    depends_on:
+      - db
+
+  dramatiq:
+    build: 
+      dockerfile: ./compose/backend/Dockerfile
+      context: .
+    command: bash -c "dramatiq app.tasks"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - ./mounts/media:/app/media
+    depends_on:
+      - backend
+      - db
+      - broker
+
+  broker:
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${BROKER_USER}
+      - RABBITMQ_DEFAULT_PASS=${BROKER_PASS}
+    restart: unless-stopped
+
+  db:
+    image: postgres:14
+    env_file:
+      - .env
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  frontend:
+    build: 
+      dockerfile: ./compose/frontend/Dockerfile
+      context: .
+    restart: unless-stopped
+
+  nginx:
+    build: 
+      dockerfile: ./compose/nginx/Dockerfile
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - 127.0.0.1:${HTTP_PORT}:80
+    volumes:
+      - ./mounts/uwsgi:/uwsgi
+      - ./mounts/logs/nginx:/var/log/nginx
+      - ./mounts/media:/webapp/media:ro
+      - ./mounts/static:/webapp/static:ro
