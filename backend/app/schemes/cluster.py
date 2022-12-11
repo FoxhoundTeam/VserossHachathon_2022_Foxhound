@@ -8,6 +8,7 @@ class ClusterORM(CamelModel):
     location: str
     lat: float
     lon: float
+    articles_count: int = 0
 
     class Config:
         orm_mode = True
