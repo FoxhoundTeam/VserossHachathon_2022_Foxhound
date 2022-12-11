@@ -1,5 +1,4 @@
 from ipaddress import IPv4Address
-from typing import Optional
 
 from app.enum import ScanStatus
 from app.schemes.base import CamelModel
@@ -12,7 +11,7 @@ class ScanCreate(CamelModel):
 class ScanORM(ScanCreate):
     id: int
     status: ScanStatus
-    log: Optional[str]
+    log: list[str]
     progress: float
 
     class Config:

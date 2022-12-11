@@ -40,8 +40,8 @@ class Scanner:
 
         def _handle_progress_logs(logs: str, progress: float):
             self.scan.progress = initial_progress + progress / len(PIPELINE)
-            if logs:
-                self.scan.log += logs + "\n"
+            if logs.strip():
+                self.scan.log.append(logs)
             self.session.add(self.scan)
             self.session.commit()
 
