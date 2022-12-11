@@ -13,7 +13,12 @@
         <v-icon v-if="!loading">mdi-magnify-expand</v-icon>
         Сканировать
       </v-btn>
-      <v-progress-linear v-if="progress" v-model="progress" height="25">
+      <v-progress-linear
+        v-if="progress"
+        v-model="progress"
+        height="25"
+        class="mt-5"
+      >
         <template v-slot:default="{ value }">
           <strong>{{ Math.ceil(value) }}%</strong>
         </template>
@@ -23,14 +28,22 @@
     <!-- результаты пентеста -->
     <v-col cols="12" md="8" no-gutters class="pa-1">
       <!-- текстовый лог -->
-      <v-virtual-scroll
-        ref="log"
-        v-model="scan.log"
-        label="Лог пентеста"
-        outlined
-        height="100"
-        item-height="20"
-      ></v-virtual-scroll>
+      <v-card v-if="log" class="mb-4">
+        <v-card-title>Лог пентеста</v-card-title>
+        <v-virtual-scroll
+          ref="log"
+          height="300"
+          item-height="50"
+          :items="log"
+          :bench="log.length"
+        >
+          <template v-slot:default="{ item }">
+            <v-list-item>
+              {{ item }}
+            </v-list-item>
+          </template>
+        </v-virtual-scroll>
+      </v-card>
 
       <v-card v-if="services">
         <v-card-title>Найденные сервисы</v-card-title>
@@ -66,7 +79,7 @@ export default {
       services: null,
       scan: {
         progress: 0,
-        log: "aasdsadfsasd "
+        log: [],
       },
     };
   },
@@ -76,6 +89,18 @@ export default {
     },
     progress() {
       return this.scan.progress * 100;
+    },
+    log() {
+      return this.scan.log;
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.longPoolingInterval);
+  },
+
+  watch: {
+    log() {
+      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
     },
   },
 
@@ -87,7 +112,6 @@ export default {
           showSnackbar: true,
         })
       ).data;
-      this.$refs.log.scrollTop = this.$refs.log.scrollHeight;
       if (this.loading) return;
       clearInterval(this.longPoolingInterval);
       this.services = (
@@ -95,10 +119,6 @@ export default {
           showSnackbar: true,
         })
       ).data;
-    },
-
-    beforeDestroy() {
-      clearInterval(this.longPoolingInterval);
     },
 
     // начать сканирование по адресу
