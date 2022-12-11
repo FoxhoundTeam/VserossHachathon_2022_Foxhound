@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app import schemes
 from app.database import Scan, Service
 from app.enum import ScanStatus
+from app.services.brute_psql import BrutePSQL
 from app.services.masscan import MasscanService
 from app.services.nmap import NmapService
 
@@ -43,7 +44,8 @@ class Scanner:
             nmap_result = NmapService(
                 self.scan.ip, ",".join([str(service.port) for service in masscan_result])
             ).start_scan()
-            self._save_services(nmap_result)
+            filled_services = BrutePSQL(self.scan.ip, nmap_result).brute()
+            self._save_services(filled_services)
         except Exception as e:
             self.scan.log += f"{e}\n"
             self.scan.status = ScanStatus.error
