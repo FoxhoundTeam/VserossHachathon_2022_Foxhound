@@ -52,16 +52,10 @@ class MasscanService:
         )
         progress = 0
         for line in iter(pid.stdout.readline, ""):
-            match = re.search(r"(\d+\.\d+)%\sdone.*found=(\d+)", line)
-            if match:
-                try:
-                    current_progress = float(match.group(1))
-                    if current_progress == 100.0 and "waiting" in line:
-                        progress = 0.99
-                    else:
-                        progress = float(match.group(1)) * 0.01
-                except Exception:
-                    pass
+            try:
+                progress = float(re.search(r"(\d+\.\d+)%\sdone.*", line).group(1)) * 0.01
+            except Exception:
+                pass
             if callable(self.handle_progress_logs):
                 self.handle_progress_logs(line, progress)
         pid.stdout.close()

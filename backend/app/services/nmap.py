@@ -90,14 +90,13 @@ class NmapService:
         )
         progress = 0
         for line in iter(pid.stdout.readline, ""):
-            m = re.search(r"About (.+)% done", line)
-            if m:
-                try:
-                    self.scan.progress = float(m.group(1)) * 0.01 / 2
-                except Exception:
-                    pass
+            try:
+                progress = float(re.search(r"About (.+)% done", line).group(1)) * 0.01
+            except Exception:
+                pass
             if callable(self.handle_progress_logs):
                 self.handle_progress_logs(line, progress)
         pid.stdout.close()
+        pid.wait()
 
         return self._parse_result()
