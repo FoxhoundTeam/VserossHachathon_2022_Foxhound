@@ -20,5 +20,5 @@ class Article(Base):
     image: str = Column(String)
     dt: date = Column(Date)
     clusters: list["Cluster"] = relationship(
-        "Cluster", secondary=article_cluster, back_populates="articles", passive_deletes=True, lazy="joined"
+        "Cluster", secondary=article_cluster, back_populates="articles", passive_deletes=True
     )
