@@ -16,6 +16,7 @@
           @fetchData="loadClusters"
           @rowClick="rowClick"
         />
+        <!--           @rowClick="rowClick" -->
         <!-- <v-data-table
           :headers="headers"
           :items="clusters"
@@ -89,21 +90,24 @@ export default {
       clusters: [
         {
           theme: ["Лесной", "пожар", "Якутия"],
-          articlesCount: 15,
+          articlesCount: 13,
           className: "Лесной пожар",
           dt: "2022-07-15",
+          location:"Якутия",
         },
         {
-          theme: ["Лесной", "пожар", "Якутия"],
-          articlesCount: 15,
-          className: "Лесной пожар",
+          theme: ["Пожар", "Москва"],
+          articlesCount: 2,
+          className: "Пожар",
           dt: "2022-07-15",
+          location:"Москва",
         },
         {
-          theme: ["Лесной", "пожар", "Якутия"],
-          articlesCount: 15,
-          className: "Лесной пожар",
-          dt: "2022-07-15",
+          theme: ["Нефтепровод", "Северный", "поток"],
+          articlesCount: 20,
+          className: "Авария",
+          dt: "2022-11-20",
+          location:"Остров Борнхольм",
         },
       ],
       test_polygon: [
@@ -156,6 +160,29 @@ export default {
   },
 
   methods: {
+    async getGeoJSON(name){
+      await axios
+      .get("https://nominatim.openstreetmap.org/search", {
+        params: {
+          q: name,
+          format: "json",
+          polygon: 1,
+          polygon_geojson: 1,
+        },
+      })
+      .then((response) => {
+        // https://vue2-leaflet.netlify.app/components/LGeoJson.html#demo
+        this.geojson = response.data[0].geojson;
+        console.log(response.data[0]);
+        this.center = [response.data[0].lat, response.data[0].lon];
+        return response.data[0].geojson;
+      })
+      .catch((err) => {
+        console.log(err);
+        return null;
+      });
+    },
+
     async loadClusters() {
       this.loading = true;
       const response = await http.getList("Cluster", {
@@ -170,8 +197,11 @@ export default {
       if (!response.data.items.length) this.allDataLoaded = true;
       this.loading = false;
     },
-    rowClick(/* row */) {
+    rowClick(row) {
       // TODO запрос локации и отрисовка полигона
+      console.log("rowClick(), row = ", row);
+      var geojson = this.getGeoJSON(row.location);
+      console.log("rowClick(), geojson = ", geojson);
     },
 
     report() {

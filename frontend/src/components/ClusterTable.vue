@@ -10,7 +10,7 @@
     :loading="loading"
     must-sort
     :custom-sort="(items) => items"
-    @click:row="rowClick(row)"
+    @click:row="rowClick"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -64,6 +64,7 @@ export default {
       this.$emit("fetchData");
     },
     rowClick(row) {
+      console.log(row);
       this.$emit("rowClick", row);
     },
   },
