@@ -56,8 +56,7 @@ class MasscanService:
                 progress = float(re.search(r"(\d+\.\d+)%\sdone.*", line).group(1)) * 0.01
             except Exception:
                 pass
-            if callable(self.handle_progress_logs):
-                self.handle_progress_logs(line, progress)
+            self.handle_progress_logs(line, progress)
         pid.stdout.close()
         pid.wait()
         return self._parse_result()

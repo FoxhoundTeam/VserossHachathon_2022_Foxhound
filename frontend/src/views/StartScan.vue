@@ -8,6 +8,7 @@
         label="Введите IP-адрес для сканирования"
         outlined
         clearable
+        readonly
       ></v-text-field>
       <v-btn color="primary" @click="startScan">
         <v-icon>mdi-magnify-expand</v-icon>
@@ -25,7 +26,7 @@ export default {
 
   data() {
     return {
-      ip: "",
+      ip: "158.160.43.251",
     };
   },
 

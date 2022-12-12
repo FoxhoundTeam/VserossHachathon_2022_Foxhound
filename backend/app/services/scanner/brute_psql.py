@@ -48,6 +48,6 @@ class BrutePSQLService:
             if service.name == "postgresql":
                 self._brute_psql_password(service)
             progress += 1 / total_services
-            if callable(self.handle_progress_logs):
-                self.handle_progress_logs("", progress)
+            self.handle_progress_logs("", progress)
+        self.handle_progress_logs("Finished psql bruteforce", 1)
         return self.services

@@ -5,6 +5,7 @@ from pydantic import AmqpDsn, BaseSettings, PostgresDsn, validator
 
 class Settings(BaseSettings):
     project_name: str = "FoxInt"
+    allow_scan_any_ip: bool = False
 
     jwt_secret: str
     jwt_algorithm: str = "HS256"
