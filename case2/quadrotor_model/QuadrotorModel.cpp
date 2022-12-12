@@ -24,6 +24,7 @@ void tokenize(std::string const& str, const char delim,
     }
 }
 
+__declspec(dllexport)
 double Constrain(const double val, double min, double max)
 {
     if (val > max) return max;
@@ -31,12 +32,15 @@ double Constrain(const double val, double min, double max)
     return val;
 }
 
+extern "C" {
+    __declspec(dllexport) double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, double* x, double* z, int pointsSize, double xCar, double zCar, double vxCar, double vzCar);
+}
 
-__declspec(dllexport)
+
 double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, double *x, double *z, int pointsSize, double xCar, double zCar, double vxCar, double vzCar)
 {
 
-    double *retArr = (double*)malloc(10*1000*sizeof(double));
+    double *retArr = (double*)malloc(10*100000*sizeof(double));
 
     /*НАЧАЛЬНЫЕ ПАРАМЕТРЫ СОСТОЯНИЯ*/
     Quaterniond quaternion = Quaterniond(1, 0, 0, 0);
@@ -107,7 +111,7 @@ double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, d
 
         if ((pos2d - Vector3d(targetX, 0, targetY)).norm() < 60)
         {
-            isCapture = true;// DEEEEEBUG!!!
+            isCapture = true;
         }
 
         Quaterniond targetQuaternion;
@@ -177,12 +181,6 @@ double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, d
             retArr[recIterator] = quadcopter.GetTime();
             recIterator++;
 
-            retArr[recIterator] = quadcopter.GetPosition().x();
-            recIterator++;
-            retArr[recIterator] = quadcopter.GetPosition().y();
-            recIterator++;
-            retArr[recIterator] = quadcopter.GetPosition().z();
-            recIterator++;
 
             retArr[recIterator] = quadcopter.GetQuaternion().w();
             recIterator++;
@@ -191,12 +189,19 @@ double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, d
             retArr[recIterator] = quadcopter.GetQuaternion().y();
             recIterator++;
             retArr[recIterator] = quadcopter.GetQuaternion().z();
+            recIterator++;
+
+            retArr[recIterator] = quadcopter.GetPosition().x();
+            recIterator++;
+            retArr[recIterator] = quadcopter.GetPosition().y();
+            recIterator++;
+            retArr[recIterator] = quadcopter.GetPosition().z();
+            
 
             recIterator++;
             retArr[recIterator] = targetX;
             recIterator++;
             retArr[recIterator] = targetY;
-
             recIterator++;
             //std::string data = quadcopter.GetData();
 
@@ -214,14 +219,24 @@ double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, d
 }
 
 int main()
-{
-    
+{   
+    int finalTime = 50;
     double xArr[] = { 0, 20, 40, 60, 80, 90, 100  };
-    double zArr[] = { 0, 10, 0, 0, 0, 0, 10 };
+    double zArr[] = { 0, 10, 0,  0,  0,  0,  10 };
 
-    double* RECs = cppfunc(100, 0, 32, 50, xArr, zArr, 7, 100, 0, -5, -2);
+    double* RECs = cppfunc(100, 0, 32, finalTime, xArr, zArr, 7, 100, 0, -5, -2);
     
-    int tvr = 1;
+    int N = finalTime / 0.04 * 10; //Count of records
+
+    for (int i = 0; i < N/10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            std::cout << RECs[i*10+j] << " ";
+        }
+        std::cout << "\n";
+    }
+
 }
 
 
