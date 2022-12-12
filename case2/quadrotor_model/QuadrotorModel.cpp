@@ -32,7 +32,7 @@ double Constrain(const double val, double min, double max)
 }
 
 
-
+__declspec(dllexport)
 double* cppfunc(double xDrone, double zDrone, double hDrone, double finalTime, double *x, double *z, int pointsSize, double xCar, double zCar, double vxCar, double vzCar)
 {
 
