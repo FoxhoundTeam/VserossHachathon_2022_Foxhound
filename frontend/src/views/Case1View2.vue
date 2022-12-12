@@ -17,13 +17,7 @@
       <!-- текстовый лог -->
       <v-card v-if="log" class="mb-4">
         <v-card-title>Лог пентеста</v-card-title>
-        <v-virtual-scroll
-          ref="log"
-          height="300"
-          item-height="50"
-          :items="log"
-          :bench="log.length"
-        >
+        <v-virtual-scroll ref="log" height="300" item-height="50" :items="log">
           <template v-slot:default="{ item }">
             <v-list-item>
               {{ item }}
@@ -84,10 +78,8 @@ export default {
     clearInterval(this.longPoolingInterval);
   },
 
-  watch: {
-    log() {
-      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
-    },
+  updated() {
+    this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
   },
 
   async beforeMount() {
@@ -105,7 +97,6 @@ export default {
           showSnackbar: true,
         })
       ).data;
-      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
     }
   },
 
@@ -124,7 +115,6 @@ export default {
           showSnackbar: true,
         })
       ).data;
-      this.$refs.log.$el.scrollTop = this.$refs.log.$el.scrollHeight;
     },
   },
 };
