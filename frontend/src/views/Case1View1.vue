@@ -1,6 +1,5 @@
 <template>
   <v-row style="height: 100%" no-gutters fill-height>
-
     <!-- таблица кластеров, фильтры, сортировка -->
     <v-col cols="12" md="4" no-gutters class="pa-1">
       <v-row>
@@ -10,21 +9,26 @@
         </v-btn>
       </v-row>
       <v-row>
-        <v-data-table
+        <cluster-table
+          :items="clusters"
+          :allDataLoaded="allDataLoaded"
+          :loading="loading"
+          @fetchData="loadClusters"
+          @rowClick="rowClick"
+        />
+        <!-- <v-data-table
           :headers="headers"
           :items="clusters"
           :items-per-page="20"
           fill-height
         >
-        </v-data-table>
+        </v-data-table> -->
       </v-row>
-
     </v-col>
 
     <!-- карта -->
     <v-col cols="12" md="8" no-gutters class="pa-1">
-      <l-map
-        style="height: 100%;" :zoom="zoom" :center="center">
+      <l-map style="height: 100%" :zoom="zoom" :center="center">
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
         <l-polygon :lat-lngs="test_polygon" :color="'green'"></l-polygon>
 
@@ -56,6 +60,8 @@ import {
   LGeoJson,
 } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
+import ClusterTable from "../components/ClusterTable.vue";
+import http from "../http";
 
 export default {
   name: "Case1View1",
@@ -65,6 +71,7 @@ export default {
     LTileLayer,
     LPolygon,
     LGeoJson,
+    ClusterTable,
     // LMarker,
   },
 
@@ -76,48 +83,27 @@ export default {
       zoom: 15,
       center: [55.751244, 37.618423],
 
-      headers: [
-        {
-          text: "Тема",
-          align: "start",
-          sortable: false,
-          value: "topic",
-        },
-        {
-          text: "Кол-во",
-          value: "number",
-        },
-        {
-          text: "Регион",
-          value: "region",
-        },
-        {
-          text: "Тип",
-          value: "type",
-        },
-        {
-          text: "Дата",
-          value: "date",
-        },
-      ],
+      loading: false,
+      allDataLoaded: false,
+      page: 1,
       clusters: [
         {
-          topic: ["Лесной", "пожар", "Якутия"],
-          number: 15,
-          type: "Лесной пожар",
-          date: "2022-07-15",
+          theme: ["Лесной", "пожар", "Якутия"],
+          articlesCount: 15,
+          className: "Лесной пожар",
+          dt: "2022-07-15",
         },
         {
-          topic: ["Лесной", "пожар", "Якутия"],
-          number: 15,
-          type: "Лесной пожар",
-          date: "2022-07-15",
+          theme: ["Лесной", "пожар", "Якутия"],
+          articlesCount: 15,
+          className: "Лесной пожар",
+          dt: "2022-07-15",
         },
         {
-          topic: ["Лесной", "пожар", "Якутия"],
-          number: 15,
-          type: "Лесной пожар",
-          date: "2022-07-15",
+          theme: ["Лесной", "пожар", "Якутия"],
+          articlesCount: 15,
+          className: "Лесной пожар",
+          dt: "2022-07-15",
         },
       ],
       test_polygon: [
@@ -169,13 +155,31 @@ export default {
       });
   },
 
-  methods:{
-    report(){
+  methods: {
+    async loadClusters() {
+      this.loading = true;
+      const response = await http.getList("Cluster", {
+        showSnackbar: true,
+        filters: {
+          per_page: 20,
+          page: this.page,
+        },
+      });
+      this.clusters = [...this.clusters, ...response.data.items];
+      this.page += 1;
+      if (!response.data.items.length) this.allDataLoaded = true;
+      this.loading = false;
+    },
+    rowClick(/* row */) {
+      // TODO запрос локации и отрисовка полигона
+    },
+
+    report() {
       //TODO
       // выбранная тема
       // список новостей
       // скрин карты
     },
-  }
+  },
 };
 </script>

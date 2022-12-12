@@ -7,6 +7,7 @@ export default {
     Login: "/api/auth/sign-in/",
     // Register: "/api/auth/sign-up/",
     Scan: "/api/scans/",
+    Cluster: "/api/clusters/",
   },
   getFilterValues: function (filters) {
     if (!filters) return "";
